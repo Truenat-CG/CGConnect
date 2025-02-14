@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DIST. DEVICE STATUS</title>
+<style>
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#districtSelect {
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath fill='rgba(0,0,0,0.54)' d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+table {
+    width: 90%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none; /* Initially hide the table */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #e0f2f7;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+#submitButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#submitButton:hover {
+    background-color: #0056b3;
+}
+</style>
+</head>
+<body>
+
+<h1>DISTRICT TRUENAT DEVICES STATUS</h1>
+
+<select id="districtSelect">
+    <option value="">All Districts</option>
+</select>
+
+<button id="submitButton">Submit</button>
+<div class="error-message" id="errorMessage"></div>
+
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>Facility Name</th>
+            <th>Device Type</th>
+            <th>Device ID</th>
+            <th>Functional Slots</th>
+            <th>Issue Reported Date</th>
+            <th>Resolved Date</th>
+            <th>Current Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    function fetchData() {
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzHQPj6MHi7xLM-Ul0bheE-i5WUFuJMOOLvzGrYS4D2oF3UKrRoBchRIBuhnpp8AnyU/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+
+        fetch(scriptUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                populateDropdown(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                displayError("Error fetching data. Please check your script URL and network connection.");
+            });
+    }
+
+    function populateDropdown(data) {
+        const districtSelect = document.getElementById('districtSelect');
+        const districts = new Set();
+
+        if (data && data.length > 0) {
+            data.forEach(row => {
+                districts.add(row[0]);
+            });
+
+            districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.text = district;
+                districtSelect.appendChild(option);
+            });
+        } else {
+            console.warn("No data received from Google Sheet.");
+            displayError("No data received from Google Sheet. Please check your sheet and script.");
+        }
+    }
+
+    function filterData() {
+        const selectedDistrict = document.getElementById('districtSelect').value;
+        const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+        const table = document.getElementById('dataTable');
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzHQPj6MHi7xLM-Ul0bheE-i5WUFuJMOOLvzGrYS4D2oF3UKrRoBchRIBuhnpp8AnyU/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+        const errorMessage = document.getElementById('errorMessage');
+
+        fetch(scriptUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                tableBody.innerHTML = '';
+                errorMessage.textContent = "";
+
+                if (data && data.length > 0) {
+                    const filteredData = data.filter(row => selectedDistrict === "" || row[0] === selectedDistrict);
+
+                    if (filteredData.length === 0) {
+                        errorMessage.textContent = "No data found for the selected district.";
+                        table.style.display = "none";
+                        return;
+                    }
+
+                    filteredData.forEach(row => {
+                        const rowData = row.slice(1);
+                        const rowElement = tableBody.insertRow();
+
+                        rowData.forEach((cellData, index) => {
+                            const cell = rowElement.insertCell();
+
+                            if (index === 4 || index === 5) { // Date columns
+                                if (cellData) {
+                                    const date = new Date(cellData);
+                                    const formattedDate = formatDateIST(date);
+                                    cell.textContent = formattedDate;
+                                } else {
+                                    cell.textContent = "";
+                                }
+                            } else {
+                                cell.textContent = cellData;
+                            }
+
+                            if (index === rowData.length - 1 && cellData === "CLOSED") {
+                                cell.style.color = "white";
+                                cell.style.backgroundColor = "green";
+                            }
+                            if (index === rowData.length - 1 && cellData === "OPEN") {
+                                cell.style.color = "white";
+                                cell.style.backgroundColor = "red";
+                            }
+                        });
+                    });
+                    table.style.display = "table";
+
+                } else {
+                    console.warn("No data received from Google Sheet.");
+                    displayError("No data received from Google Sheet. Please check your sheet and script.");
+                }
+            })
+            .catch(error => {
+                console.error('Error filtering data:', error);
+                displayError("Error filtering data. Please try again.");
+            });
+    }
+
+    function formatDateIST(date) {
+        if (!(date instanceof Date)) { // Check if it's a valid Date object
+            return ""; // Or handle the error as needed
+        }
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        return date.toLocaleString('en-IN', options);
+    }
+
+    function displayError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+    }
+
+    document.getElementById('submitButton').addEventListener('click', filterData);
+
+    fetchData();
+</script>
+
+</body>
+</html>

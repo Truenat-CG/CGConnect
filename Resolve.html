@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ISSUE RESOLVED FORM</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<style>
+body {
+    font-family: sans-serif;
+    background-color: #BC8F8F;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 500px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+select,
+input[type="text"],
+input[type="tel"],
+textarea {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath fill='rgba(0,0,0,0.54)' d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+select:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ISSUE RESOLVED FORM</h1>
+
+    <form id="issueForm">
+
+        <label for="district">District:</label>
+        <select id="district" name="district" required>
+            <option value="">Select District</option>
+        </select><br><br>
+
+        <label for="siteName">Site Name:</label>
+        <select id="siteName" name="siteName" required>
+            <option value="">Select Site Name</option>
+        </select><br><br>
+
+        <label for="deviceType">Device Type:</label>
+        <select id="deviceType" name="deviceType" required>
+            <option value="">Select Device Type</option>
+            <option value="Truelab">Truelab (RTPCR Unit)</option>
+            <option value="Other">Trueprep (Extraction Unit)</option>
+        </select><br><br>
+
+        <label for="deviceId">Device ID:</label>
+        <select id="deviceId" name="deviceId" required>
+            <option value="">Select Device ID</option>
+        </select><br><br>
+
+        <label for="functionalSlots">Rectified Slots:</label>
+        <select id="functionalSlots" name="functionalSlots" disabled required>
+            <option value="">Select Rectified Slots</option>
+        </select><br><br>
+
+        <label for="issue">Action Taken/Spares Replaced:</label><br>
+        <textarea id="issue" name="issue" rows="4" cols="50" required></textarea><br><br>
+
+        <label for="reportedBy">Resolved By:</label>
+        <input type="text" id="reportedBy" name="reportedBy" required><br><br>
+
+        <label for="contactNo">Contact No:</label>
+        <input type="tel" id="contactNo" name="contactNo" required><br><br>
+
+        <button type="submit">Submit</button>
+
+    </form>
+</div>
+
+<script>
+$(document).ready(function() {
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbzch7IvvOrvlMAPn2l1wG3-1dk2n8GxX5inyQJan3gJ9obZn_Mhq3VH4hSzQdNagY_S/exec"; // **REPLACE THIS WITH YOUR SCRIPT URL**
+
+    function populateDropdowns() {
+        $.getJSON(scriptUrl + "?action=getData", function(data) {
+            const districts = [...new Set(data.map(item => item.District))];
+            $("#district").empty().append("<option value=''>Select District</option>");
+            districts.forEach(district => {
+                $("#district").append(`<option value="${district}">${district}</option>`);
+            });
+        });
+    }
+
+    populateDropdowns();
+
+    $("#district").change(function() {
+        const selectedDistrict = $(this).val();
+        $.getJSON(scriptUrl + "?action=getSites&district=" + selectedDistrict, function(data) {
+            $("#siteName").empty().append("<option value=''>Select Site Name</option>");
+            data.forEach(item => {
+                $("#siteName").append(`<option value="${item.Site}">${item.Site}</option>`);
+            });
+        });
+    });
+
+    $("#siteName").change(function() {
+        const selectedSite = $(this).val();
+        $.getJSON(scriptUrl + "?action=getDevices&site=" + selectedSite, function(data) {
+            $("#deviceId").empty().append("<option value=''>Select Device ID</option>");
+            data.forEach(item => {
+                $("#deviceId").append(`<option value="${item.DeviceID}">${item.DeviceID}</option>`);
+            });
+        });
+    });
+
+    $("#deviceType").change(function() {
+        const selectedDeviceType = $(this).val();
+        if (selectedDeviceType === "Truelab") {
+            $("#functionalSlots").prop("disabled", false);
+        } else {
+            $("#functionalSlots").prop("disabled", true);
+            $("#functionalSlots").empty().append("<option value=''>Select Functional Slots</option>");
+        }
+    });
+
+    $("#deviceId").change(function() {
+        const selectedDeviceId = $(this).val();
+        const $functionalSlots = $("#functionalSlots");
+
+        if ($("#deviceType").val() !== "Truelab") return;
+
+        $functionalSlots.empty().append("<option value=''>Select Functional Slots</option>");
+
+        if (selectedDeviceId.startsWith("TLDX")) {
+            $functionalSlots.append("<option value='1'>1</option>");
+        } else if (selectedDeviceId.startsWith("TLDU")) {
+            $functionalSlots.append("<option value='1'>1</option>");
+            $functionalSlots.append("<option value='2'>2</option>");
+        } else if (selectedDeviceId.startsWith("TLQU")) {
+            for (let i = 1; i <= 4; i++) {
+                $functionalSlots.append(`<option value='${i}'>${i}</option>`);
+            }
+        }
+    });
+
+
+    $("#issueForm").submit(function(event) {
+        event.preventDefault();
+
+        const formData = $(this).serializeArray();
+
+        $.ajax({
+            url: scriptUrl + "?action=submit",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                alert("INCIDENT REPORTED SUCCESSFULLY!");
+                $("#issueForm")[0].reset();
+            },
+            error: function(error) {
+                alert("Error in submission. Please try again.");
+                console.error("Error:", error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
