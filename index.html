@@ -10,76 +10,78 @@
             background: linear-gradient(to bottom right, #e0f2f7, #bbdefb);
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center horizontally */
+            align-items: center;
             min-height: 100vh;
             margin: 0;
             color: #333;
         }
 
-        .top-bar { /* New container for the top logo */
+        .top-bar {
             width: 100%;
             padding: 10px;
             display: flex;
-            justify-content: flex-start; /* Align logo to the left */
-            align-items: center; /* Vertically center */
-            background-color: rgba(255, 255, 255, 0.7); /* Optional: semi-transparent white background */
-            position: fixed; /* Keep at the top even when scrolling */
+            justify-content: flex-start;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.7);
+            position: fixed;
             top: 0;
             left: 0;
-            z-index: 10; /* Ensure it's above other content */
+            z-index: 10;
         }
 
         .top-logo {
-            max-height: 40px; /* Adjust as needed */
+            max-height: 40px;
             width: auto;
-            margin-right: 20px; /* Space between top logo and title if needed */
+            margin-right: 20px;
         }
-
 
         .container {
             background-color: white;
-            padding: 40px;
+            padding: 20px; /* Reduced padding for mobile */
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             text-align: center;
-            width: 500px;
-            margin-top: 70px; /* Add top margin to account for fixed top bar */
-
+            width: 90%; /* Occupy most of the screen width on mobile */
+            max-width: 500px; /* Limit width on larger screens */
+            margin-top: 70px;
+            box-sizing: border-box; /* Include padding in width calculation */
         }
 
         img {
-            max-width: 250px;
+            max-width: 200px; /* Slightly smaller image on mobile */
             height: auto;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* Reduced margin */
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
         h1 {
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* Reduced margin */
             color: #2196f3;
+            font-size: 1.8em; /* Responsive font size */
         }
 
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px; /* Reduced gap */
             align-items: center;
         }
 
         button {
-            padding: 15px 25px;
+            padding: 12px 20px; /* Slightly smaller buttons */
             background-color: #2196f3;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.2em; /* Responsive font size */
             font-weight: 500;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 300px;
+            box-sizing: border-box; /* Include padding in width */
         }
 
         button:hover {
@@ -94,19 +96,33 @@
         }
 
         footer {
-            margin-top: 30px;
-            font-size: 12px;
+            margin-top: 20px; /* Reduced margin */
+            font-size: 0.8em; /* Responsive font size */
             color: #777;
+        }
+
+
+        /* Media query for smaller screens (mobile) */
+        @media (max-width: 400px) { /* Adjust breakpoint as needed */
+            h1 {
+                font-size: 1.5em; /* Smaller heading on mobile */
+            }
+
+            button {
+                font-size: 1em; /* Smaller button font */
+                padding: 10px 18px; /* Slightly smaller buttons */
+            }
         }
     </style>
 </head>
 <body>
 
-    
+    <div class="top-bar">
+        <img class="top-logo" src="your_image.jpg" alt="Chhattisgarh Map or Truenat Logo"> </div>
 
     <div class="container">
         <img src="your_image.jpg" alt="Chhattisgarh Map or Truenat Logo">
-        <h1>CG Truenat Dashboard</h1>
+        <h1>Chhattisgarh Truenat Database</h1>
 
         <div class="button-container">
             <button onclick="window.location.href='mydata.html'">DISTRICT BREAKDOWN STATUS</button>
