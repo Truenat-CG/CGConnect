@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
@@ -18,7 +19,14 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    width: 90%; /* Occupy most of the screen on smaller devices */
+    max-width: 300px; /* Limit width on larger screens */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+h2 { /* Style the heading (optional) */
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 label {
@@ -44,6 +52,8 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%; /* Full width button on smaller screens */
+    box-sizing: border-box;
 }
 
 button:hover {
@@ -53,6 +63,26 @@ button:hover {
 .error-message {
     color: red;
     margin-top: 10px;
+    text-align: center; /* Center error messages */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 400px) { /* Adjust breakpoint as needed */
+    #loginContainer {
+        padding: 15px; /* Reduce padding */
+    }
+
+    h2 { /* If you add an h2 */
+        font-size: 1.2em; /* Smaller heading */
+    }
+
+    label {
+        font-size: 0.9em; /* Smaller labels */
+    }
+
+    input, button {
+        font-size: 0.9em; /* Smaller form elements */
+    }
 }
 </style>
 </head>
