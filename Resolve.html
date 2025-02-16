@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>ISSUE RESOLVED FORM</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
@@ -21,9 +20,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 90%; /* Occupy most of the screen on smaller devices */
-    max-width: 500px; /* Limit width on larger screens */
-    box-sizing: border-box; /* Include padding and border in width */
+    width: 500px;
 }
 
 h1 {
@@ -62,8 +59,6 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 100%; /* Make button full width on smaller screens */
-    box-sizing: border-box;
 }
 
 button:hover {
@@ -84,28 +79,6 @@ select:focus {
     outline: none;
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-/* Media query for smaller screens */
-@media (max-width: 400px) { /* Adjust breakpoint as needed */
-    .container {
-        padding: 10px; /* Reduce padding */
-    }
-
-    h1 {
-        font-size: 1.5em; /* Smaller heading */
-    }
-
-    label {
-        font-size: 0.9em; /* Smaller labels */
-    }
-
-    select,
-    input[type="text"],
-    input[type="tel"],
-    textarea, button {
-        font-size: 0.9em; /* Smaller form elements */
-    }
 }
 </style>
 </head>
