@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PendingCalls</title>
+<style>
+body {
+    font-family: sans-serif;
+    background-color: #fbeee6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh; /* Ensure full viewport height */
+}
+
+h1 {
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-align: center; /* Center the heading */
+}
+
+table {
+    width: 80%; /* Make table wider */
+    border-collapse: collapse;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    overflow-x: auto; /* Add horizontal scroll if needed */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px; /* Increase padding */
+    text-align: left;
+    font-size: 12px; /* Slightly larger font */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis (...) for overflow */
+}
+
+th {
+    background-color: #007bff; /* Blue header */
+    color: white;
+    font-weight: bold;
+    text-align: center; /* Center header text */
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+tr:hover {
+    background-color: #e0f2f7; /* Light blue on hover */
+}
+
+/* Optional: Style the scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive design (adjust as needed) */
+@media (max-width: 768px) {
+    table {
+        width: 100%; /* Full width on smaller screens */
+    }
+
+    th, td {
+        font-size: 12px; /* Smaller font on smaller screens */
+        padding: 10px;
+    }
+}
+
+/* Style for date columns (if needed) */
+.date-column {
+    text-align: center; /* Center date values */
+}
+
+#returnButton {
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px; /* Space above the button */
+    text-decoration: none; /* Remove underline from link */
+}
+
+#returnButton:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+</style>
+</head>
+<body>
+
+<h1>TOTAL BREAKDOWN CALLS PENDING</h1>
+
+<table id="dataTable">
+  <thead>
+    <tr></tr>  </thead>
+  <tbody>
+  </tbody>
+</table>
+<a href="molbiochoice.html" id="returnButton">RETURN</a>
+<script>
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbxFPD_t-LLPaoRJwu-Bnq8co3oETIMj8xtyYr6xjsEgIo7bkB7AAGW4MEh8gb_bbBNO/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+
+fetch(scriptUrl)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data && data.length > 0) {
+      populateTable(data);
+    } else {
+      console.warn("No data received from Google Sheet.");
+      const table = document.getElementById('dataTable');
+      table.innerHTML = "<p>No data found in the sheet.</p>";
+    }
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+    const table = document.getElementById('dataTable');
+    table.innerHTML = "<p>Error fetching data. Please check your script URL and network connection.</p>";
+  });
+
+function populateTable(data) {
+  const table = document.getElementById('dataTable');
+  const thead = table.querySelector('thead tr');
+  const tbody = table.querySelector('tbody');
+
+  const headers = Object.keys(data[0]);
+  headers.forEach(headerText => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    thead.appendChild(th);
+  });
+
+  data.forEach(item => {
+    const row = tbody.insertRow();
+    headers.forEach((header, index) => {
+      const cell = row.insertCell();
+      let cellValue = item[header];
+
+      // Check if it's the last column AND if the value is a date
+      if (index === headers.length - 1 && isDate(cellValue)) {
+        cellValue = formatDateIST(new Date(cellValue));
+      }
+
+      cell.textContent = cellValue;
+    });
+  });
+}
+
+function isDate(value) {
+  if (value instanceof Date) {
+    return true;
+  }
+  try {
+    const date = new Date(value);
+    return !isNaN(date.getTime());
+  } catch (error) {
+    return false;
+  }
+}
+
+function formatDateIST(date) {
+  const options = {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+  return date.toLocaleString('en-IN', options);
+}
+</script>
+
+</body>
+</html>
+</script>
+
+</body>
+</html>

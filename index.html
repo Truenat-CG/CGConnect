@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<style>
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e0f2f7; /* Light Blue Background */;
+}
+
+#loginContainer {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 350px;
+    box-sizing: border-box;
+    display: flex; /* Enable flexbox for centering */
+    flex-direction: column; /* Align items vertically */
+    align-items: center; /* Center horizontally */
+}
+
+#loginContainer img { /* Style the image within the container */
+    max-width: 100%; /* Make image responsive */
+    height: auto;
+    margin-bottom: 20px; /* Add some space below the image */
+    display: block; /* Prevents image from affecting flexbox layout */
+}
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#loginContainer {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 90%; /* Occupy most of the screen on smaller devices */
+    max-width: 300px; /* Limit width on larger screens */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+h2 { /* Style the heading (optional) */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Full width button on smaller screens */
+    box-sizing: border-box;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    text-align: center; /* Center error messages */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 400px) { /* Adjust breakpoint as needed */
+    #loginContainer {
+        padding: 15px; /* Reduce padding */
+    }
+
+    h2 { /* If you add an h2 */
+        font-size: 1.2em; /* Smaller heading */
+    }
+
+    label {
+        font-size: 0.9em; /* Smaller labels */
+    }
+
+    input, button {
+        font-size: 0.9em; /* Smaller form elements */
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="loginContainer">
+    <img src="your_image.jpg" alt="Chhattisgarh Map or Truenat Logo">
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">LOGIN</button>
+        <div id="loginError" class="error-message"></div>
+        
+        
+    </form>
+ </div>
+
+<script>
+$(document).ready(function() {
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbx5ErdyTk8eg1f7RsPz1pSsZpPQlKRi5DLVp9ko0fXcwMKntf0N2kp9aOD535WRJ8jS/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+
+    $("#loginForm").submit(function(event) {
+        event.preventDefault();
+        const username = $("#username").val();
+        const password = $("#password").val();
+        const $loginError = $("#loginError");
+
+        $.ajax({
+            url: scriptUrl + "?action=login",
+            type: "POST",
+            data: { username: username, password: password },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.redirectUrl;
+                } else {
+                    $loginError.text("Invalid username or password.");
+                }
+            },
+            error: function(error) {
+                $loginError.text("An error occurred. Please try again later.");
+                console.error("Login Error:", error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

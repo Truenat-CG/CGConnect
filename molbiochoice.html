@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Menu</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #logoContainer {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #logo {
+            max-width: 90%;
+            height: auto;
+            max-height: 200px;
+        }
+
+        #buttonContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 400px) {
+            #logo {
+                max-height: 150px;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+
+    </style>
+</head>
+<body>
+
+    <div id="logoContainer">
+        <img id="logo" src="your_logo.jpg" alt="Your Logo">
+    </div>
+
+    <div id="buttonContainer">
+        <button onclick="window.location.href='pendingcalls.html'">PENDING CALLS</button>
+        <button onclick="window.location.href='Resolve.html'">BREAKDOWN ATTEND</button>
+        <button onclick="window.location.href='ppm.html'">PREVENTIVE MAINTENANCE</button>
+        <button onclick="window.location.href='pwchange.html'">CREATE USER / CHANGE PASSWORD</button>
+        <br><button onclick="window.location.href='index2.html'">RETURN</button>
+    </div>
+
+<table id="dataTable">
+        <thead>
+            <tr></tr>  </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Function to fetch and display data (same as before)
+        function displayData(jsonData) {
+            const data = JSON.parse(jsonData);
+            const table = document.getElementById("dataTable");
+            const thead = table.querySelector("thead tr");
+            const tbody = table.querySelector("tbody");
+
+            thead.innerHTML = ""; // Clear existing header
+            tbody.innerHTML = ""; // Clear existing data
+
+            if (data.length === 0) {
+              table.innerHTML = "<p>No data found.</p>";
+              return;
+            }
+
+
+            // Create table header
+            data[0].forEach(headerText => {
+                const th = document.createElement("th");
+                th.textContent = headerText;
+                thead.appendChild(th);
+            });
+
+            // Populate table data (start from the second row)
+            for (let i = 1; i < data.length; i++) {
+                const rowData = data[i];
+                const row = tbody.insertRow();
+                rowData.forEach(cellText => {
+                    const cell = row.insertCell();
+                    cell.textContent = cellText;
+                });
+            }
+        }
+
+        // Call the Apps Script function and display the data
+        function fetchData() {
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxNnrtXMEIxqJZfPxqhL3nAip0cz_IU8dLnC2hjRV3aYcSO_KCVbBNJOW3GjVsVHhIW8A/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+
+            google.script.run.withSuccessHandler(displayData).getDataFromSheet();
+        }
+
+        window.addEventListener('load', fetchData); // Call when the page loads
+
+    </script> 
+
+</body>
+</html>

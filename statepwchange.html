@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Change/Create Password</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<style>
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#changePasswordContainer {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 90%; /* Occupy most of the screen on smaller devices */
+    max-width: 300px; /* Limit width on larger screens */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+h2 { /* Style the heading */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Full width button on smaller screens */
+    box-sizing: border-box;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error-message, .success-message {
+    margin-top: 10px;
+    text-align: center; /* Center messages */
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message {
+    color: green;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 400px) { /* Adjust breakpoint as needed */
+    #changePasswordContainer {
+        padding: 15px; /* Reduce padding */
+    }
+
+    h2 {
+        font-size: 1.2em; /* Smaller heading */
+    }
+
+    label {
+        font-size: 0.9em; /* Smaller labels */
+    }
+
+    input, button {
+        font-size: 0.9em; /* Smaller form elements */
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="changePasswordContainer">
+    <h2>Change Password</h2>
+    <form id="changePasswordForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="currentPassword">Current Password:</label>
+        <input type="password" id="currentPassword" name="currentPassword" required><br><br>
+
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword" required><br><br>
+
+        <label for="confirmPassword">Confirm New Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+
+        <button type="submit">Submit</button>
+        <div id="message" class="error-message"></div>
+        <br><button onclick="window.location.href='statelogin.html'">RETURN</button>
+    </form>
+</div>
+
+<script>
+$(document).ready(function() {
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxOKEj5Ip_8GPusztTijnuXp1Wgq2R6cBCayC4x5uF8KWK4naoi8C_8-N8TN5nYVfP3-g/exec"; // **REPLACE WITH YOUR SCRIPT URL**
+
+    $("#changePasswordForm").submit(function(event) {
+        event.preventDefault();
+
+        const username = $("#username").val();
+        const currentPassword = $("#currentPassword").val();
+        const newPassword = $("#newPassword").val();
+        const confirmPassword = $("#confirmPassword").val();
+        const $messageDiv = $("#message");
+
+        if (newPassword !== confirmPassword) {
+            $messageDiv.text("New password and confirm password do not match.");
+            return;
+        }
+
+        $.ajax({
+            url: scriptUrl + "?action=changePassword", // Always changePassword now
+            type: "POST",
+            data: {
+                username: username,
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            },
+            success: function(response) {
+                if (response.success) {
+                    $messageDiv.removeClass("error-message").addClass("success-message");
+                    $messageDiv.text(response.message || "Password changed successfully.");
+                    $("#changePasswordForm")[0].reset();
+                } else {
+                    $messageDiv.removeClass("success-message").addClass("error-message");
+                    $messageDiv.text(response.message || "Error processing request.");
+                }
+            },
+            error: function(error) {
+                $messageDiv.removeClass("success-message").addClass("error-message");
+                $messageDiv.text("An error occurred. Please try again later.");
+                console.error("Request Error:", error);
+            }
+        });
+    });
+
+    // Removed the username check and related code
+    // The button text is now always "Change Password"
+});
+</script>
+
+</body>
+</html>
+</body>
+</html>
