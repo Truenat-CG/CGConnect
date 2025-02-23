@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Menu</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        #logoContainer {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #logo {
+            max-width: 90%;
+            height: auto;
+            max-height: 200px;
+        }
+
+        #buttonContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 400px) {
+            #logo {
+                max-height: 150px;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+
+    </style>
+</head>
+<body>
+
+    <div id="logoContainer">
+        <img id="logo" src="your_image.jpg" alt="Your Logo">
+    </div>
+
+    <div id="buttonContainer">
+        <button onclick="window.location.href='Summy.html'">BREAKDOWN SUMMARY</button>
+        <button onclick="window.location.href='statusopen.html'">BREAKDOWNS PENDING</button>
+        <button onclick="window.location.href='data2.HTML'">TEST DASHBOARD</button><b><b><b>
+        <button onclick="window.location.href='index2.html'">RETURN</button>
+
+    </div>
+</body>
+</html>
