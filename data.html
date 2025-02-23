@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CG Testing Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* Ensure full viewport height */
+            background-color: #d6eaf8;
+        }
+
+        #chart-area {
+            display: flex;
+            flex-wrap: wrap; /* Allow charts to wrap */
+            justify-content: center; /* Center charts horizontally */
+            margin-top: 20px;
+            width: 95%
+        }
+
+        .chart-container {
+            width: 800px; /* Adjust width as needed */
+            height: 400px; /* Adjust height as needed */
+            margin: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            background-color: white; /* White background for charts */
+            border-radius: 8px; /* Rounded corners */
+            padding: 20px;
+            display: none;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            appearance: none; /* remove default dropdown arrow */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cpath fill='rgba(0,0,0,0.54)' d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 30px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive adjustments (example) */
+        @media (max-width: 600px) {
+            .chart-container {
+                width: 90%; /* Make charts take full width on smaller screens */
+                height: 300px;
+                margin: 15px; /* Reduced margin */
+            }
+
+         #chart-area {
+                width: 95%;
+            }
+
+        }
+
+#buttonContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 400px) {
+            #logo {
+                max-height: 150px;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+        }  
+    </style>
+</head>
+<body>
+
+    <h1>Chhattisgarh District's Data Visualisation</h1> <select id="chartSelect" onchange="showChart(this.value)">
+        <option value="">Select a Criteria</option>
+    </select>
+    <div id="chart-area"></div>
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbyhSxS9BAHYMl7YPYP_JrJgrjTNF_gJ0BxUZKw07fOlAVlOtekp9rnHlWpUAuNUReyvrg/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+        let charts = {};
+        let headers; // Store headers for dropdown population
+
+        fetch(scriptUrl + '?action=getSheetData')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                headers = data.shift(); // Store headers globally
+                populateDropdown(headers); // Populate dropdown
+                createCharts(data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                alert("Error fetching data. Check console.");
+            });
+
+        function populateDropdown(headers) {
+            const chartSelect = document.getElementById('chartSelect');
+            headers.slice(3).forEach(header => { // Start from index 3 (Column D)
+                const option = document.createElement('option');
+                option.value = header;
+                option.text = header;
+                chartSelect.appendChild(option);
+            });
+        }
+
+
+        function createCharts(data) {
+            const chartArea = document.getElementById('chart-area');
+            const labels = data.map(row => row[0]);
+            const dataColumnIndices = [3, 4, 5, 6, 7, 8, 9]; // D to J
+
+            dataColumnIndices.forEach(columnIndex => {
+                const values = data.map(row => row[columnIndex]);
+                const chartId = headers[columnIndex];
+
+                const chartContainer = document.createElement('div');
+                chartContainer.classList.add('chart-container');
+                chartContainer.id = chartId;
+                chartArea.appendChild(chartContainer);
+
+                const canvas = document.createElement('canvas');
+                chartContainer.appendChild(canvas);
+
+                const ctx = canvas.getContext('2d');
+                charts[chartId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: headers[columnIndex],
+                            data: values,
+                            backgroundColor: 'rgba(55, 140, 200, 0.2)',
+                            borderColor: 'rgba(55, 140, 200, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            });
+        }
+
+        document.getElementById('showChartButton').addEventListener('click', () => {
+            const selectedChart = document.getElementById('chartSelect').value;
+            showChart(selectedChart);
+        });
+
+        function showChart(chartName) {
+            for (const chartId in charts) {
+                document.getElementById(chartId).style.display = 'none';
+            }
+            if (charts[chartName]) {
+                document.getElementById(chartName).style.display = 'block';
+            }
+        }
+    </script>
+
+<div id="buttonContainer">
+        <br><br>
+        <button onclick="window.location.href='authoritychoice.html'">RETURN</button>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CG Monthly Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa; /* Light gray background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #343a40; /* Dark gray heading */
+            margin-bottom: 20px;
+        }
+
+        #table-container {
+            width: 70%; /* Table width */
+            max-width: 900px; /* Limit table width on large screens */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 8px; /* Rounded corners */
+            overflow: hidden; /* Hide table overflow for rounded corners */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0; /* Remove default margin */
+            table-layout: fixed; /* helps in even distribution of column width */
+        }
+
+        th, td {
+            border: 1px solid #dee2e6; /* Light gray borders */
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            overflow: hidden; /* prevents content from overflowing */
+            text-overflow: ellipsis; /* adds ... if content is too long */
+            white-space: nowrap; /* prevents text from wrapping */
+            font-family: 'Cambria', serif; /* Serif example */
+        }
+
+        tr:nth-child(even) { /* Alternate row background color */
+            background-color: #aed6f1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #table-container {
+                width: 95%;
+            }
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 400px) {
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }      
+
+#buttonContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 400px) {
+            #logo {
+                max-height: 150px;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+        }  
+    </style>
+</head>
+<body>
+
+    <h1>Chhattisgarh Monthly Test Dashboard</h1>
+    <div id="table-container"></div>  </body>
+    <script>
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzTkpB-rkeS3UFBWb_OIXatRCcXYuco_uzyilCm9j2poROjxCFwqZj4NQHc09Kqtmwx/exec'; // **REPLACE WITH YOUR SCRIPT URL**
+
+        fetch(scriptUrl + '?action=getSheet3Data') // Fetch data from Sheet3
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                displayTable(data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                alert("Error fetching data. Check console.");
+            });
+
+        function displayTable(data) {
+    const tableContainer = document.getElementById('table-container');
+    if (!data || data.length === 0) {
+        tableContainer.innerHTML = "<p>No data to display.</p>";
+        return;
+    }
+
+    const table = document.createElement('table');
+    const headerRow = table.insertRow();
+
+    // ***CRUCIAL FIX: Handle headers correctly***
+    const headers = data.shift(); // Remove the header row from the data and store it
+    headers.forEach(headerText => {
+        const headerCell = document.createElement('th');
+        headerCell.textContent = headerText;
+        headerRow.appendChild(headerCell);
+    });
+
+    data.forEach(row => {
+        const dataRow = table.insertRow();
+        row.forEach(cellText => {
+            const dataCell = dataRow.insertCell();
+            dataCell.textContent = cellText;
+        });
+    });
+
+    tableContainer.appendChild(table);
+}
+
+ </script>
+
+<div id="buttonContainer">
+        <br><br><button onclick="window.location.href='data.html'">DISTRICT DATA VISUALIZATION</button><b><b><b>
+        <button onclick="window.location.href='authoritychoice.html'">RETURN</button>
+    </div>
+
+</body>
+</html>
