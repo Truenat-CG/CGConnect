@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<link rel="manifest" href="/manifest.json">
+<script src="/service-worker.js"></script>
+    
 <title>Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -171,6 +175,19 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { // Wait for the page to load
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch(error => {
+        console.error('Service Worker registration failed:', error);
+      });
+  });
+}
 </script>
 </body>
 </html>
