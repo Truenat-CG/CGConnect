@@ -86,8 +86,8 @@ select:focus {
     box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 
-/* Media query for smaller screens */
-@media (max-width: 400px) { /* Adjust breakpoint as needed */
+/* Media query for smaller screens (example breakpoint) */
+@media (max-width: 400px) {  /* Adjust breakpoint as needed */
     .container {
         padding: 10px; /* Reduce padding */
     }
@@ -107,6 +107,7 @@ select:focus {
         font-size: 0.9em; /* Smaller form elements */
     }
 }
+
 </style>
 </head>
 <body>
@@ -140,7 +141,7 @@ select:focus {
 
         <label for="functionalSlots">Rectified Slots:</label>
         <select id="functionalSlots" name="functionalSlots" disabled required>
-            <option value="">Select Rectified Slots</option>
+            <option value="">Select Non-Functional Slots</option>
         </select><br><br>
 
         <label for="issue">Action Taken/Spares Replaced:</label><br>
@@ -153,13 +154,13 @@ select:focus {
         <input type="tel" id="contactNo" name="contactNo" required><br><br>
 
         <button type="submit">SUBMIT</button>
-        <br><br><button onclick="window.location.href='molbiochoice.html'">RETURN</button>
+        <br><br><button onclick="window.location.href='userchoice.html'">RETURN</button>
     </form>
 </div>
 
 <script>
 $(document).ready(function() {
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyvzHxFBb6cg2biuEI6RHX4a4bsRk0-xa-ufoQN1Bq6XOQ4_wOJAnowy8Y3J2XZnCnb/exec"; // **REPLACE THIS WITH YOUR SCRIPT URL**
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbwdaFkw4cC545paxat4zeuvuQmSiXI37cojL1zKUzpniuV8vKaSh6FKXlMXr5kICPJv/exec"; // **REPLACE THIS WITH YOUR SCRIPT URL**
 
     function populateDropdowns() {
         $.getJSON(scriptUrl + "?action=getData", function(data) {
@@ -244,29 +245,6 @@ $(document).ready(function() {
         });
     });
 });
-
-$("#issueForm").submit(function(event) {
-        event.preventDefault();
-
-        const formData = $(this).serializeArray();
-        const district = $("#district").val();
-
-        $.ajax({
-            url: scriptUrl + "?action=submit&district=" + district,
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                alert("INCIDENT REPORTED SUCCESSFULLY!");
-                $("#issueForm")[0].reset();
-            },
-            error: function(error) {
-                alert("Error in submission. Please try again.");
-                console.error("Error:", error);
-            }
-        });
-    });
-});
-
 </script>
 
 </body>
